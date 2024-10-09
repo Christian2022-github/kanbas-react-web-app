@@ -5,9 +5,7 @@ import GreenCheckmark from "./GreenCheckmark";
 export default function ModulesControlButtons() {
     return (
         <div className="float-end align-items-center ">
-            <span className="wd-rounded-corners-all-around 
-     wd-border-thin border-dark-subtle wd-border-solid px-2
-     ">40% of Total </span>  <FaPlus /> <IoEllipsisVertical className="fs-4" />
+            <GreenCheckmark />  <FaPlus /> <IoEllipsisVertical className="fs-4" />
         </div>
     )
 }

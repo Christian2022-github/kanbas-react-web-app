@@ -60,6 +60,7 @@ import AssignmentContorls from "./AssignmentControls";
 import AssignmentIcon from "./AssignmentIcon";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { Link } from "react-router-dom";
+import AssignmentControlButtons from "./AssignmentControlButtons";
 
 // import LessonControlButtons from "./LessonControlButtons";
 // import ModulesControlButtons from "./ModulesControlButtons";
@@ -84,7 +85,7 @@ export default function Assignments() {
                         <div className="wd-assignments-title p-3 ps-2 bg-secondary ">
                             <BsGripVertical className="me-2 fs-3 text-center" />
                             <TiArrowSortedDown className="me-2" /><b> ASSIGNMENTS</b>
-                            <ModulesControlButtons />
+                            <AssignmentControlButtons />
                         </div>
 
                         <ul className="wd-assignment-list-item list-group rounded-0">
