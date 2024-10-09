@@ -1,17 +1,27 @@
 import BackgroundColors from "./BackgroundColors";
+import BootstrapForms from "./BootstrapForms";
+import BootstrapGrids from "./BootstrapGrids";
+import BootstrapLists from "./BootstrapLists";
+import BootstrapNavigation from "./BootstrapNavigation";
+import BootstrapTables from "./BootstrapTables";
 import Borders from "./Borders";
+import Corners from "./Corners";
 import Dimensions from "./Dimensions";
 import Flex from "./Flex";
 import Float from "./Float";
 import ForegroundColors from "./ForegroundColors";
 import GridLayout from "./GridLayout";
 import "./index.css";
+import Margins from "./Margins";
 import Padding from "./Padding";
 import Positions from "./Positions";
-import Zindex from "./ZIndex";
+import ReactIconsSampler from "./ReactIcons";
+import ScreenSizeLabel from "./ScreenSizeLabel";
+import Zindex from "./Zindex";
+
 export default function Lab2() {
     return (
-        <div id="wd-lab2">
+        <div id="wd-lab2" className="container">
             <h2>Lab 2 - Cascading Style Sheets</h2>
             <h3>Styling with the STYLE attribute</h3>
             <p>
@@ -20,15 +30,6 @@ export default function Lab2() {
                 it is considered bad practice and you should avoid
                 using the style attribute
             </p>
-            <div id="wd-css-class-selectors">
-                <h3>Class selectors</h3>
-                <p className="wd-class-selector">
-                    Instead of using IDs to refer to elements, you can use an element's CLASS attribute
-                </p>
-                <h4 className="wd-class-selector">
-                    This heading has same style as paragraph above
-                </h4>
-            </div>
 
             <div id="wd-css-id-selectors">
                 <h3>ID selectors</h3>
@@ -40,6 +41,15 @@ export default function Lab2() {
                     Here's another paragraph using a different ID and a different look and
                     feel
                 </p>
+            </div>
+            <div id="wd-css-class-selectors">
+                <h3>Class selectors</h3>
+                <p className="wd-class-selector">
+                    Instead of using IDs to refer to elements, you can use an element's CLASS attribute
+                </p>
+                <h4 className="wd-class-selector">
+                    This heading has same style as paragraph above
+                </h4>
             </div>
             <div id="wd-css-document-structure">
                 <div className="wd-selector-1">
@@ -65,13 +75,33 @@ export default function Lab2() {
             <BackgroundColors />
             <Borders />
             <Padding />
+            <Margins />
+            <Corners />
             <Dimensions />
             <Positions />
             <Zindex />
             <Float />
             <GridLayout />
             <Flex />
-        </div>
+            <br />
+            <ReactIconsSampler />
+            <BootstrapGrids />
+            <br />
+            <br />
+            <ScreenSizeLabel />
+            <br />
+            <BootstrapTables />
+            <br />
+            <BootstrapLists />
+            <br />
+            <BootstrapForms />
+            <br />
+            <BootstrapNavigation />
+            <br />
+            <div id="wd-hello-padding">
+                Hello World!
+            </div>
+        </div >
 
     );
 }
