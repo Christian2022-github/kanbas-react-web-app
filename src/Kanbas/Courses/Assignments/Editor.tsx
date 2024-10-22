@@ -1,4 +1,41 @@
+import { useParams, Link } from "react-router-dom";
+import * as db from "../../Databases";
+
 export default function AssignmentEditor() {
+    const { cid, aid } = useParams();
+
+
+    const assignment = db.assignments.find(
+        (assignment) => assignment._id === aid && assignment.course === cid
+    );
+
+    const formatDate = (year: number, month: string, day: number) => {
+
+        const monthMap: { [key: string]: string } = {
+            January: "01",
+            February: "02",
+            March: "03",
+            April: "04",
+            May: "05",
+            June: "06",
+            July: "07",
+            August: "08",
+            September: "09",
+            October: "10",
+            November: "11",
+            December: "12",
+        };
+
+        const monthNum = monthMap[month];
+        const dayStr = day < 10 ? `0${day}` : day.toString();
+
+
+        return `${year}-${monthNum}-${dayStr}`;
+    };
+
+    if (!assignment) {
+        return <div>Assignment not found</div>;
+    }
     return (
         <div id="wd-assignments-editor" className="float-end col-10">
 
@@ -6,7 +43,7 @@ export default function AssignmentEditor() {
                 <label htmlFor="input1" className="form-label">
                     Assignment Name</label>
                 <input type="text" className="form-control"
-                    id="wd-name" value="A1 - ENV + HTML" />
+                    id="wd-name" value={assignment.title} />
             </div>
             <div className="mb-3 ">
                 <textarea
@@ -23,7 +60,7 @@ export default function AssignmentEditor() {
                     </td>
                     <td >
                         <input type="text" className="form-control"
-                            id="wd-points" value="100" />
+                            id="wd-points" value={assignment.points} />
                     </td>
                 </tr>
                 <tr>
@@ -114,8 +151,9 @@ export default function AssignmentEditor() {
 
                             <label htmlFor="wd-due-date"><b>Due</b></label>
                             <div className="input-group">
-                                <input className="form-control mb-3" type="date" id="wd-due-date" value="2024-05-13" />
+                                <input className="form-control mb-3" type="date" id="wd-due-date" value={formatDate(assignment.dueDateYear, assignment.dueDateMonth, assignment.dueDateDay)} />
                             </div>
+
 
                             <div>
                                 <table>

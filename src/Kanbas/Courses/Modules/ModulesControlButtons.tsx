@@ -1,3 +1,4 @@
+import React from "react";
 import { FaPlus } from "react-icons/fa6";
 import { IoEllipsisVertical } from "react-icons/io5";
 import GreenCheckmark from "./GreenCheckmark";
