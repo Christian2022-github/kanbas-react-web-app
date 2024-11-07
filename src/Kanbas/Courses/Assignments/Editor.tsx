@@ -1,16 +1,52 @@
-import { useParams, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
+import { updateAssignment } from "./reducer";
+import { addAssignment } from "./reducer";
 import * as db from "../../Databases";
 
-export default function AssignmentEditor() {
+export default function AssignmentEditor(
+) {
     const { cid, aid } = useParams();
+    const location = useLocation();
+    const isNewAssignment = (aid === "AssignmentEditor");
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const assignments = useSelector((state: any) => state.assignmentReducer);
 
 
-    const assignment = db.assignments.find(
-        (assignment) => assignment._id === aid && assignment.course === cid
-    );
+    const [assignment2, setAssignment2] = useState<any>({});
 
-    const formatDate = (year: number, month: string, day: number) => {
+    const [availableDateMonth, setAvailableDateMonth] = useState(assignment2.availableDateMonth || "");
+    const [availableDateDay, setAvailableDateDay] = useState(assignment2.availableDateMonth || "");
+    const [availableDateYear, setAvailableDateYear] = useState(assignment2.availableDateMonth || "");
+    const [untilDateMonth, setUntilDateMonth] = useState(assignment2.availableDateMonth || "");
+    const [untilDateDay, setUntilDateDay] = useState(assignment2.availableDateMonth || "");
+    const [untilDateYear, setUntilDateYear] = useState(assignment2.availableDateMonth || "");
+    const [dueDateMonth, setDueDateMonth] = useState(assignment2.availableDateMonth || "");
+    const [dueDateDay, setDueDateDay] = useState(assignment2.availableDateMonth || "");
+    const [dueDateYear, setDueDateYear] = useState(assignment2.availableDateMonth || "");
 
+
+
+    const handleSave = () => {
+        if (!isNewAssignment) {
+            dispatch(updateAssignment(assignment2));
+        } else {
+            dispatch(addAssignment(assignment2));
+        }
+
+        navigate(`/Kanbas/Courses/${cid}/Assignments`);
+    };
+
+    const handleCancel = () => {
+        navigate(`/Kanbas/Courses/${cid}/Assignments`);
+    };
+
+
+    const formatDate = (year: string, month: string, day: string) => {
         const monthMap: { [key: string]: string } = {
             January: "01",
             February: "02",
@@ -26,32 +62,86 @@ export default function AssignmentEditor() {
             December: "12",
         };
 
-        const monthNum = monthMap[month];
-        const dayStr = day < 10 ? `0${day}` : day.toString();
+        const monthNum = monthMap[month] || "01";
+        const dayStr = day ? (parseInt(day) < 10 ? `0${day}` : day) : "01";
+        const yearStr = year || "2023";
 
-
-        return `${year}-${monthNum}-${dayStr}`;
+        return `${yearStr}-${monthNum}-${dayStr}`;
     };
 
-    if (!assignment) {
-        return <div>Assignment not found</div>;
-    }
+    const handleDateChange = (
+        setYear: (year: string) => void,
+        setMonth: (month: string) => void,
+        setDay: (day: string) => void
+    ) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        const [year, month, day] = e.target.value.split("-");
+        setYear(year);
+        setMonth(month);
+        setDay(day);
+    };
+
+    const monthMap: { [key: string]: string } = {
+        "01": "January",
+        "02": "February",
+        "03": "March",
+        "04": "April",
+        "05": "May",
+        "06": "June",
+        "07": "July",
+        "08": "August",
+        "09": "September",
+        "10": "October",
+        "11": "November",
+        "12": "December",
+    };
+
+    const handleDueDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const [month, day, year] = e.target.value.split("/");
+
+        if (month && day && year) {
+            setAssignment2({
+                ...assignment2,
+                dueDateMonth: monthMap[month] || "",
+                dueDateDay: parseInt(day, 10), // Convert day to number
+                dueDateYear: parseInt(year, 10) // Convert year to number
+            });
+        }
+    };
+
+
+    useEffect(() => {
+        if (aid === "AssignmentEditor") {
+            setAssignment2({
+                title: "New Assignment",
+                description: "New Description",
+                points: "0",
+            });
+        } else {
+            const a = db.assignments.find((assignment) => assignment._id === aid);
+            setAssignment2(a);
+        }
+    }, [aid]);
+
     return (
         <div id="wd-assignments-editor" className="float-end col-10">
 
             <div className="mb-3">
                 <label htmlFor="input1" className="form-label">
                     Assignment Name</label>
-                <input type="text" className="form-control"
-                    id="wd-name" value={assignment.title} />
+                <input
+                    type="text"
+                    className="form-control"
+                    id="wd-name"
+                    defaultValue={assignment2.title}
+                    onChange={(e) => setAssignment2({ ...assignment2, title: e.target.value })} />
             </div>
             <div className="mb-3 ">
                 <textarea
                     className="form-control"
                     id="wd-description"
                     rows={3}
-                    value={`The assignment is available online.\n\nSubmit a link to the landing page of your Web application running on Netlify.\n\nThe landing page should include the following:\n- Your full name and section\n- Links to each of the lab assignments\n- Link to the Kanbas application\n- Links to all relevant source code repositories\n\nThe Kanbas application should include a link to navigate back to the landing page.`}
-                />
+                    defaultValue={assignment2.description}
+                    onChange={(e) => setAssignment2({ ...assignment2, description: e.target.value })} />
             </div>
             <table align="center">
                 <tr>
@@ -60,7 +150,8 @@ export default function AssignmentEditor() {
                     </td>
                     <td >
                         <input type="text" className="form-control"
-                            id="wd-points" value={assignment.points} />
+                            id="wd-points" defaultValue={assignment2.points}
+                            onChange={(e) => setAssignment2({ ...assignment2, points: e.target.value })} />
                     </td>
                 </tr>
                 <tr>
@@ -151,7 +242,10 @@ export default function AssignmentEditor() {
 
                             <label htmlFor="wd-due-date"><b>Due</b></label>
                             <div className="input-group">
-                                <input className="form-control mb-3" type="date" id="wd-due-date" value={formatDate(assignment.dueDateYear, assignment.dueDateMonth, assignment.dueDateDay)} />
+                                <input className="form-control mb-3" type="date" id="wd-due-date"
+                                    defaultValue={formatDate(dueDateYear, dueDateMonth, dueDateDay)}
+                                    onChange={handleDueDateChange}
+                                />
                             </div>
 
 
@@ -168,10 +262,18 @@ export default function AssignmentEditor() {
                                         </tr>
                                         <tr>
                                             <td align="left" valign="top">
-                                                <input className="form-control mb-3" type="date" id="wd-available-from" value="2024-05-06" />
+                                                <input className="form-control mb-3"
+                                                    type="date"
+                                                    id="wd-available-from"
+                                                    defaultValue={formatDate(availableDateYear, availableDateMonth, availableDateDay)}
+                                                    onChange={handleDateChange(setAvailableDateYear, setAvailableDateMonth, setAvailableDateDay)} />
                                             </td>
                                             <td align="right" valign="top">
-                                                <input className="form-control" type="date" id="wd-available-until" value="2024-05-20" />
+                                                <input className="form-control"
+                                                    type="date"
+                                                    id="wd-available-until"
+                                                    defaultValue={formatDate(untilDateYear, untilDateMonth, untilDateDay)}
+                                                    onChange={handleDateChange(setUntilDateYear, setUntilDateMonth, setUntilDateDay)} />
                                             </td>
                                         </tr>
                                     </tbody>
@@ -187,9 +289,9 @@ export default function AssignmentEditor() {
             <table align="right">
                 <tr >
                     <td valign="top">
-                        <button type="submit" className="btn btn-secondary" >Cancel</button>
+                        <button type="submit" className="btn btn-secondary" onClick={handleCancel}>Cancel</button>
 
-                        <button type="submit" className="btn btn-danger">Save</button>
+                        <button type="submit" className="btn btn-danger" onClick={handleSave} >Save </button>
                     </td>
                 </tr>
             </table>

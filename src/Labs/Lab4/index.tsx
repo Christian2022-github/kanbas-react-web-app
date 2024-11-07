@@ -5,28 +5,19 @@ import Counter from "./Counter";
 import DateStateVariable from "./DateStateVariable";
 import EventObject from "./EventObject";
 import ObjectStateVariable from "./ObjectStateVariable";
+import ParentStateComponent from "./ParentStateComponent";
 import PassingDataOnEvent from "./PassingDataOnEvent";
 import PassingFunctions from "./PassingFunctions";
+import ReduxExamples from "./ReduxExamples";
+import TodoList from "./ReduxExamples/todos/TodoList";
 import StringStateVariables from "./StringStateVariables";
-const handleClick = (parameter = "Hello") => {
-    console.log(parameter)
-}
+
 
 export default function Lab4() {
-
-    const alice = {
-        first: 'Alice',
-        last: 'Wonderland',
-        salary: 100000
-    };
-
-    alice.salary = alice['salary'] + 10000
 
     function sayHello() {
         alert("Hello");
     }
-
-    console.log(alice.salary);
 
     return (
         <div id="wd-lab4">
@@ -41,9 +32,9 @@ export default function Lab4() {
             <DateStateVariable />
             <ObjectStateVariable />
             <ArrayStateVariable />
-            {/* <button onClick={handleClick}>
-                Hello
-            </button> */}
+            <ParentStateComponent />
+            <ReduxExamples />
+            <TodoList />
         </div>
 
     )

@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { BsGripVertical } from "react-icons/bs";
 import LessonControlButtons from "../Modules/LessonControlButtons";
 import ModulesControlButtons from "../Modules/ModulesControlButtons";
@@ -7,12 +8,29 @@ import { TiArrowSortedDown } from "react-icons/ti";
 import { Link } from "react-router-dom";
 import AssignmentControlButtons from "./AssignmentControlButtons";
 import { useParams } from "react-router";
+import { CiTrash } from "react-icons/ci";
 import * as db from "../../Databases";
-
+import { deleteAssignment } from "./reducer";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Assignments() {
     const { cid } = useParams();
-    const assignments = db.assignments;
+    const dispatch = useDispatch();
+    // const [assignments, setAssignments] = useState(db.assignments.filter((assignment) => assignment.course === cid));
+    const assignments = useSelector(
+        (state: any) => state.assignmentReducer
+    ).assignments.filter((assignment: any) => assignment.course === cid);
+
+    const [assignmentToDelete, setAssignmentToDelete] = useState<string | null>(null);
+    const { role } = useSelector((state: any) => state.accountReducer.currentUser);
+
+    const handleDelete = (assignmentId: string) => {
+        dispatch(deleteAssignment(assignmentId));
+        // setAssignments(assignments.filter((assignment) => assignment._id !== assignmentId));
+        setAssignmentToDelete(null);
+    };
+
+
     return (
         <div>
             <div>
@@ -22,7 +40,8 @@ export default function Assignments() {
                         id="wd-search-assignment"
                         placeholder="🔍Search..."
                     />
-                    <AssignmentContorls />
+
+                    {role === "FACULTY" && (<AssignmentContorls />)}
                 </div>
 
                 <br />
@@ -35,35 +54,65 @@ export default function Assignments() {
                         </div>
 
                         <ul className="wd-assignment-list-item list-group rounded-0">
-                            {assignments
-                                .filter((assignment: any) => assignment.course === cid)
-                                .map((assignment: any) => (
-                                    <li className="wd-assignment-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
-                                        <div className="d-flex align-items-center">
-                                            <BsGripVertical className="me-2 fs-3" />
-                                            <AssignmentIcon />
-                                            <div>
-                                                <Link className="wd-assignment-link list-group-item text-black border border-0 p-0 mb-0 fs-3"
-                                                    to={`/Kanbas/Courses/${cid}/Assignments/${assignment._id}`}>
+                            {assignments.map((assignment: any) => (
+                                <li key={assignment._id} className="wd-assignment-list-item list-group-item p-3 ps-1 d-flex justify-content-between align-items-center">
+                                    <div className="d-flex align-items-center">
+                                        <BsGripVertical className="me-2 fs-3" />
+                                        <AssignmentIcon />
+                                        <div>
+                                            {role === "FACULTY" ? (
+                                                <Link
+                                                    className="wd-assignment-link list-group-item text-black border border-0 p-0 mb-0 fs-3"
+                                                    to={`/Kanbas/Courses/${cid}/Assignments/${assignment._id}`}
+                                                >
                                                     <h4><b>{assignment.title}</b></h4>
                                                 </Link>
-                                                <p className="mb-0">
-                                                    <span className="text-danger"> Multiple Modules</span> | <b>Not available until</b> {assignment.availableDateMonth} {assignment.availableDateDay} at {assignment.availableDateTime} |
-                                                </p>
-                                                <p className="mb-0">
-                                                    <b>Due</b> {assignment.dueDateMonth} {assignment.dueDateDay} at {assignment.dueDateTime} | {assignment.points} pts
-                                                </p>
+                                            ) : (
+                                                <div className="wd-assignment-link list-group-item text-black border border-0 p-0 mb-0 fs-3">
+                                                    <h4><b>{assignment.title}</b></h4>
+                                                </div>
+                                            )}
+
+                                            <p className="mb-0">
+                                                <span className="text-danger"> Multiple Modules</span> | <b>Not available until</b> {assignment.availableDateMonth} {assignment.availableDateDay} at {assignment.availableDateTime} |
+                                            </p>
+                                            <p className="mb-0">
+                                                <b>Due</b> {assignment.dueDateMonth} {assignment.dueDateDay} at {assignment.dueDateTime} | {assignment.points} pts
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        {role === "FACULTY" && (
+                                            <button type="button" data-bs-toggle="modal" data-bs-target={`#deleteModal-${assignment._id}`} onClick={() => setAssignmentToDelete(assignment._id)}>
+                                                <CiTrash />
+                                            </button>
+                                        )}
+                                        <LessonControlButtons />
+                                    </div>
+
+                                    <div className="modal fade" id={`deleteModal-${assignment._id}`} data-bs-backdrop="static" data-bs-keyboard="false" tab-Index="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                        <div className="modal-dialog">
+                                            <div className="modal-content">
+                                                <div className="modal-header">
+                                                    <h1 className="modal-title fs-5" id="deleteModalLabel">Continue?</h1>
+                                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={() => setAssignmentToDelete(null)}></button>
+                                                </div>
+                                                <div className="modal-body">
+                                                    Are you sure you want to delete this assignment?
+                                                </div>
+                                                <div className="modal-footer">
+                                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={() => setAssignmentToDelete(null)}>No</button>
+                                                    <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={() => handleDelete(assignment._id)}>Yes</button>
+                                                </div>
                                             </div>
                                         </div>
-                                        <LessonControlButtons />
-                                    </li>
-                                ))
-                            }
+                                    </div>
+                                </li>
+                            ))}
                         </ul>
                     </li>
                 </ul>
             </div>
         </div>
-
     );
 }
