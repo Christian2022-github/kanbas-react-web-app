@@ -74,10 +74,10 @@ export default function Assignments() {
                                             )}
 
                                             <p className="mb-0">
-                                                <span className="text-danger"> Multiple Modules</span> | <b>Not available until</b> {assignment.availableDateMonth} {assignment.availableDateDay} at {assignment.availableDateTime} |
+                                                <span className="text-danger"> Multiple Modules</span> | <b>Not available until</b> {assignment.availableDateMonth} {assignment.availableDateDay} at 12:00 am |
                                             </p>
                                             <p className="mb-0">
-                                                <b>Due</b> {assignment.dueDateMonth} {assignment.dueDateDay} at {assignment.dueDateTime} | {assignment.points} pts
+                                                <b>Due</b> {assignment.dueDateMonth} {assignment.dueDateDay} at 12:00 am | {assignment.points} pts
                                             </p>
                                         </div>
                                     </div>

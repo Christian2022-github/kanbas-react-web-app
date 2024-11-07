@@ -31,15 +31,7 @@ export default function AssignmentEditor(
 
 
 
-    const handleSave = () => {
-        if (!isNewAssignment) {
-            dispatch(updateAssignment(assignment2));
-        } else {
-            dispatch(addAssignment(assignment2));
-        }
 
-        navigate(`/Kanbas/Courses/${cid}/Assignments`);
-    };
 
     const handleCancel = () => {
         navigate(`/Kanbas/Courses/${cid}/Assignments`);
@@ -80,34 +72,6 @@ export default function AssignmentEditor(
         setDay(day);
     };
 
-    const monthMap: { [key: string]: string } = {
-        "01": "January",
-        "02": "February",
-        "03": "March",
-        "04": "April",
-        "05": "May",
-        "06": "June",
-        "07": "July",
-        "08": "August",
-        "09": "September",
-        "10": "October",
-        "11": "November",
-        "12": "December",
-    };
-
-    const handleDueDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const [month, day, year] = e.target.value.split("/");
-
-        if (month && day && year) {
-            setAssignment2({
-                ...assignment2,
-                dueDateMonth: monthMap[month] || "",
-                dueDateDay: parseInt(day, 10), // Convert day to number
-                dueDateYear: parseInt(year, 10) // Convert year to number
-            });
-        }
-    };
-
 
     useEffect(() => {
         if (aid === "AssignmentEditor") {
@@ -115,12 +79,39 @@ export default function AssignmentEditor(
                 title: "New Assignment",
                 description: "New Description",
                 points: "0",
+                course: cid,
+                availableDateMonth: "August",
+                availableDateDay: 12,
+                availableDateYear: 2000,
+                untilDateMonth: "August",
+                untilDateDay: 14,
+                untilDateYear: 2000,
+                dueDateMonth: "August",
+                dueDateDay: 13,
+                DueDateYear: 2000,
+                availableDateTime: "12:00am",
+                untilDateTime: "12:00am",
+                dueDateTime: "12:00am",
             });
         } else {
             const a = db.assignments.find((assignment) => assignment._id === aid);
             setAssignment2(a);
         }
     }, [aid]);
+
+    const handleSave = () => {
+
+
+        if (!isNewAssignment) {
+            console.log("updated!");
+            dispatch(updateAssignment(assignment2));
+        } else {
+            console.log("added!");
+            dispatch(addAssignment(assignment2));
+        }
+
+        navigate(`/Kanbas/Courses/${cid}/Assignments`);
+    };
 
     return (
         <div id="wd-assignments-editor" className="float-end col-10">
@@ -132,7 +123,7 @@ export default function AssignmentEditor(
                     type="text"
                     className="form-control"
                     id="wd-name"
-                    defaultValue={assignment2.title}
+                    value={assignment2.title}
                     onChange={(e) => setAssignment2({ ...assignment2, title: e.target.value })} />
             </div>
             <div className="mb-3 ">
@@ -140,7 +131,7 @@ export default function AssignmentEditor(
                     className="form-control"
                     id="wd-description"
                     rows={3}
-                    defaultValue={assignment2.description}
+                    value={assignment2.description}
                     onChange={(e) => setAssignment2({ ...assignment2, description: e.target.value })} />
             </div>
             <table align="center">
@@ -150,7 +141,7 @@ export default function AssignmentEditor(
                     </td>
                     <td >
                         <input type="text" className="form-control"
-                            id="wd-points" defaultValue={assignment2.points}
+                            id="wd-points" value={assignment2.points}
                             onChange={(e) => setAssignment2({ ...assignment2, points: e.target.value })} />
                     </td>
                 </tr>
@@ -243,8 +234,8 @@ export default function AssignmentEditor(
                             <label htmlFor="wd-due-date"><b>Due</b></label>
                             <div className="input-group">
                                 <input className="form-control mb-3" type="date" id="wd-due-date"
-                                    defaultValue={formatDate(dueDateYear, dueDateMonth, dueDateDay)}
-                                    onChange={handleDueDateChange}
+                                    value={formatDate(dueDateYear, dueDateMonth, dueDateDay)}
+                                    onChange={handleDateChange(setDueDateYear, setDueDateMonth, setDueDateDay)}
                                 />
                             </div>
 

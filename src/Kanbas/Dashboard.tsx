@@ -2,22 +2,29 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { enroll, unenroll } from "./Courses/Enrollments/reducer";
-import * as db from "../Kanbas/Databases";
 
-export default function Dashboard({ courses, course, setCourse, addNewCourse,
-  deleteCourse, updateCourse }: {
-    courses: any[]; course: any; setCourse: (course: any) => void;
-    addNewCourse: () => void; deleteCourse: (course: any) => void;
+export default function Dashboard(
+  { courses,
+    course,
+    setCourse,
+    addNewCourse,
+    deleteCourse,
+    updateCourse,
+  }: {
+    courses: any[];
+    course: any;
+    setCourse: (course: any) => void;
+    addNewCourse: () => void;
+    deleteCourse: (course: any) => void;
     updateCourse: () => void;
-  }) {
-
-
+  }
+) {
 
 
   const dispatch = useDispatch();
 
   const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
-  const isNotFaculty = currentUser.role !== "FACULTY";
+  const isStudent = currentUser.role === "STUDENT";
 
   const enrollments = useSelector((state: any) => state.enrollmentReducer.enrollments);
 
@@ -49,17 +56,13 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse,
     dispatch(unenroll(enrollment));
   };
 
-
-
-
-
   return (
     <div className="p-4" id="wd-dashboard">
       <h1 id="wd-dashboard-title">Dashboard</h1>
       <hr />
 
 
-      {isNotFaculty ? (
+      {isStudent ? (
         <button
           className="btn btn-primary float-end mt-2 mb-4"
           id="wd-enrollments-button"
@@ -75,20 +78,18 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse,
             <button className="btn btn-primary float-end" id="wd-add-new-course-click" onClick={addNewCourse}>
               Add
             </button>
-            <button className="btn btn-warning float-end me-2"
-              onClick={updateCourse}
-              id="wd-update-course-click">
+            <button className="btn btn-warning float-end me-2" onClick={updateCourse} id="wd-update-course-click">
               Update
             </button>
           </h5>
           <br />
           <input
-            value={course.name}
+            defaultValue={course.name}
             className="form-control mb-2"
             onChange={(e) => setCourse({ ...course, name: e.target.value })}
           />
           <textarea
-            value={course.description}
+            defaultValue={course.description}
             className="form-control"
             onChange={(e) => setCourse({ ...course, description: e.target.value })}
           />
@@ -100,7 +101,7 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse,
       <hr />
       <div id="wd-dashboard-courses" className="row">
         <div className="row row-cols-1 row-cols-md-5 g-4">
-          {(showAllCourses ? courses : enrolledCourses).map((course) => {
+          {(showAllCourses || !isStudent ? courses : enrolledCourses).map((course) => {
             const isEnrolled = enrollments.some((enrollment: { user: any; course: any; }) =>
               enrollment.user === currentUser._id && enrollment.course === course._id
             );
@@ -119,7 +120,7 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse,
                       Go
                     </Link>
 
-                    {isNotFaculty ? (
+                    {isStudent ? (
                       isEnrolled ? (
                         <button
                           className="btn btn-danger float-end"
