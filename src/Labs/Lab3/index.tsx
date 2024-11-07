@@ -70,7 +70,7 @@ export default function Lab3() {
             <JsonStringify />
             <House />
             <TodoItem />
-            {/* <TodoList /> */}
+            <TodoList />
             <Spreading />
             <Destructing />
             <FunctionDestructing />
