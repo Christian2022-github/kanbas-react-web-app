@@ -1,8 +1,21 @@
 import { FaPlus } from "react-icons/fa6";
-export default function AssignmentContorls() {
+import { useNavigate, useParams } from "react-router";
+
+export default function AssignmentControls() {
+    const navigate = useNavigate();
+    const { cid } = useParams();
+
+    const handleAddAssignmentClick = () => {
+        navigate(`/Kanbas/Courses/${cid}/Assignments/AssignmentEditor`, {
+            state: { isNewAssignment: true },
+        });
+    };
+
     return (
         <div id="wd-modules-controls" className="text-nowrap">
-            <button id="wd-add-module-btn" className="btn btn-lg btn-danger me-1 float-end">
+            <button id="wd-add-module-btn"
+                className="btn btn-lg btn-danger me-1 float-end"
+                onClick={handleAddAssignmentClick}>
                 <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
                 Assignment
             </button>
@@ -13,4 +26,3 @@ export default function AssignmentContorls() {
         </div>
     );
 }
-

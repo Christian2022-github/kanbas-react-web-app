@@ -7,12 +7,11 @@ import AssignmentEditor from "./Assignments/Editor";
 import { FaAlignJustify } from "react-icons/fa";
 import PeopleTable from "./People/Table";
 import { Link, useLocation } from "react-router-dom";
-import { courses } from "../Databases";
 
 
 
 
-export default function Courses() {
+export default function Courses({ courses }: { courses: any[]; }) {
   const { pathname } = useLocation();
   const { cid } = useParams();
   const course = courses.find((course) => course._id === cid);
