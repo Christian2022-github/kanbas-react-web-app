@@ -4,6 +4,8 @@ import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { updateAssignment } from "./reducer";
 import { addAssignment } from "./reducer";
 import * as db from "../../Databases";
+import * as assingmentsClient from "../Assignments/client";
+
 
 export default function AssignmentEditor(
 ) {
@@ -29,6 +31,63 @@ export default function AssignmentEditor(
     const [dueDateDay, setDueDateDay] = useState(assignment2.availableDateMonth || "");
     const [dueDateYear, setDueDateYear] = useState(assignment2.availableDateMonth || "");
 
+
+    const createAssignmentForCourse = async () => {
+        if (!cid) return; // Ensure course ID is available
+        const newAssignment = {
+            title: assignment2.title,
+            description: assignment2.description,
+            points: assignment2.points,
+            course: cid,
+            availableDateMonth: "August",
+            availableDateDay: 12,
+            availableDateYear: 2000,
+            untilDateMonth: "August",
+            untilDateDay: 14,
+            untilDateYear: 2000,
+            dueDateMonth: "August",
+            dueDateDay: 13,
+            DueDateYear: 2000,
+            availableDateTime: "12:00am",
+            untilDateTime: "12:00am",
+            dueDateTime: "12:00am",
+        };
+
+        try {
+            const assignment = await assingmentsClient.createAssignmentForCourse(cid, newAssignment);
+            dispatch(addAssignment(assignment));
+        } catch (error) {
+            console.error("Failed to create assignment:", error);
+        }
+    };
+
+
+
+    const updateAssignmentForCourse = async () => {
+        if (!aid) return; // Ensure assignment ID is available
+        const updatedAssignment = {
+            ...assignment2,
+            availableDateMonth: "August",
+            availableDateDay: 12,
+            availableDateYear: 2000,
+            untilDateMonth: "August",
+            untilDateDay: 14,
+            untilDateYear: 2000,
+            dueDateMonth: "August",
+            dueDateDay: 13,
+            DueDateYear: 2000,
+            availableDateTime: "12:00am",
+            untilDateTime: "12:00am",
+            dueDateTime: "12:00am",
+        };
+
+        try {
+            const assignment = await assingmentsClient.updateAssignment(updatedAssignment);
+            dispatch(updateAssignment(assignment)); // Dispatch action to update Redux state
+        } catch (error) {
+            console.error("Failed to update assignment:", error);
+        }
+    };
 
 
 
