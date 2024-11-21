@@ -3,13 +3,18 @@ import { assignments } from "../../Databases";
 
 
 const initialState = {
-    assignments: assignments,
+    assignments: [],
 };
 
 const assignmentsSlice = createSlice({
     name: "assignments",
     initialState,
     reducers: {
+
+        setModules: (state, action) => {
+            state.assignments = action.payload;
+        },
+
         addAssignment: (state, { payload: assignment }) => {
             const newAssignment: any = {
                 _id: new Date().getTime().toString(),
@@ -32,7 +37,7 @@ const assignmentsSlice = createSlice({
 
             };
 
-            state.assignments = [...state.assignments, newAssignment];
+            state.assignments = [...state.assignments, newAssignment] as any;
             console.log(state.assignments);
         },
         deleteAssignment: (state, { payload: assignmentId }) => {
@@ -44,16 +49,16 @@ const assignmentsSlice = createSlice({
             console.log('update')
             state.assignments = state.assignments.map((a: any) =>
                 a._id === assignment._id ? assignment : a
-            );
+            ) as any;
         },
         editAssignment: (state, { payload: assignmentId }) => {
             state.assignments = state.assignments.map((a: any) =>
                 a._id === assignmentId ? { ...a, editing: true } : a
-            );
+            ) as any;
         },
     },
 });
 
-export const { addAssignment, deleteAssignment, updateAssignment, editAssignment } =
+export const { addAssignment, deleteAssignment, updateAssignment, editAssignment, setModules } =
     assignmentsSlice.actions;
 export default assignmentsSlice.reducer;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BsGripVertical } from "react-icons/bs";
 import LessonControlButtons from "../Modules/LessonControlButtons";
 import ModulesControlButtons from "../Modules/ModulesControlButtons";
@@ -10,25 +10,57 @@ import AssignmentControlButtons from "./AssignmentControlButtons";
 import { useParams } from "react-router";
 import { CiTrash } from "react-icons/ci";
 import * as db from "../../Databases";
-import { deleteAssignment } from "./reducer";
+import * as assignmentsClient from "../Assignments/client";
+
+import { setModules, deleteAssignment } from "./reducer";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Assignments() {
     const { cid } = useParams();
     const dispatch = useDispatch();
+
+
+
+    const fetchModules = async () => {
+        const modules = await assignmentsClient.findAssignmentsForCourse(cid as string);
+        dispatch(setModules(modules));
+    };
+    useEffect(() => {
+        fetchModules();
+    }, []);
+
+
     // const [assignments, setAssignments] = useState(db.assignments.filter((assignment) => assignment.course === cid));
+
     const assignments = useSelector(
         (state: any) => state.assignmentReducer
-    ).assignments.filter((assignment: any) => assignment.course === cid);
+    ).assignments;
+
+    const removeAssignment = async (assignmentId: string) => {
+        try {
+            await assignmentsClient.deleteAssignment(assignmentId);
+            dispatch(deleteAssignment(assignmentId));
+        } catch (error) {
+            console.error("Failed to delete assignment:", error);
+        }
+    };
 
     const [assignmentToDelete, setAssignmentToDelete] = useState<string | null>(null);
     const { role } = useSelector((state: any) => state.accountReducer.currentUser);
 
-    const handleDelete = (assignmentId: string) => {
-        dispatch(deleteAssignment(assignmentId));
-        // setAssignments(assignments.filter((assignment) => assignment._id !== assignmentId));
-        setAssignmentToDelete(null);
+    // const handleDelete = (assignmentId: string) => {
+    //     dispatch(deleteAssignment(assignmentId));
+    //     // setAssignments(assignments.filter((assignment) => assignment._id !== assignmentId));
+    //     setAssignmentToDelete(null);
+    // };
+
+    const deleteA = async () => {
+        if (assignmentToDelete) {
+            await removeAssignment(assignmentToDelete);
+            setAssignmentToDelete(null);
+        }
     };
+
 
 
     return (
@@ -102,7 +134,7 @@ export default function Assignments() {
                                                 </div>
                                                 <div className="modal-footer">
                                                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={() => setAssignmentToDelete(null)}>No</button>
-                                                    <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={() => handleDelete(assignment._id)}>Yes</button>
+                                                    <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={() => deleteA()}>Yes</button>
                                                 </div>
                                             </div>
                                         </div>
