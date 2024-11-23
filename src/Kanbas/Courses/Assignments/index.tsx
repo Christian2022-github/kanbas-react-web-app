@@ -73,7 +73,6 @@ export default function Assignments() {
                         placeholder="🔍Search..."
                     />
 
-{/*                     {role === "FACULTY" && (<AssignmentContorls />)} */}
                     {role === "FACULTY" && (<AssignmentContorls />)}
                 </div>
 
@@ -93,7 +92,7 @@ export default function Assignments() {
                                         <BsGripVertical className="me-2 fs-3" />
                                         <AssignmentIcon />
                                         <div>
-                                            {role !== "FACULTY" ? (
+                                            {role === "FACULTY" ? (
                                                 <Link
                                                     className="wd-assignment-link list-group-item text-black border border-0 p-0 mb-0 fs-3"
                                                     to={`/Kanbas/Courses/${cid}/Assignments/${assignment._id}`}
@@ -115,11 +114,11 @@ export default function Assignments() {
                                         </div>
                                     </div>
                                     <div>
-{/*                                         {role === "FACULTY" && ( */}
+                                         {role === "FACULTY" && ( 
                                             <button type="button" data-bs-toggle="modal" data-bs-target={`#deleteModal-${assignment._id}`} onClick={() => setAssignmentToDelete(assignment._id)}>
                                                 <CiTrash />
                                             </button>
-                                        // )}
+                                         )}
                                         <LessonControlButtons />
                                     </div>
 
