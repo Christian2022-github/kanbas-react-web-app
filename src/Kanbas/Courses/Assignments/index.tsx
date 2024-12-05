@@ -12,18 +12,18 @@ import { CiTrash } from "react-icons/ci";
 import * as db from "../../Databases";
 import * as assignmentsClient from "../Assignments/client";
 
-import { setModules, deleteAssignment } from "./reducer";
+import { setAssignments, deleteAssignment } from "./reducer";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Assignments() {
-    const { cid } = useParams();
+    const { cid, aid } = useParams();
     const dispatch = useDispatch();
 
 
 
     const fetchModules = async () => {
         const modules = await assignmentsClient.findAssignmentsForCourse(cid as string);
-        dispatch(setModules(modules));
+        dispatch(setAssignments(modules));
     };
     useEffect(() => {
         fetchModules();
@@ -96,6 +96,7 @@ export default function Assignments() {
                                                 <Link
                                                     className="wd-assignment-link list-group-item text-black border border-0 p-0 mb-0 fs-3"
                                                     to={`/Kanbas/Courses/${cid}/Assignments/${assignment._id}`}
+
                                                 >
                                                     <h4><b>{assignment.title}</b></h4>
                                                 </Link>

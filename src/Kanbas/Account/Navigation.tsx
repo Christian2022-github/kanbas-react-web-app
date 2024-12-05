@@ -8,6 +8,7 @@ export default function AccountNavigation() {
     { name: "Signup", path: "/Kanbas/Account/Signup" },
   ];
   const { pathname } = useLocation();
+  const active = (path: string) => (pathname.includes(path) ? "active" : "");
 
   return (
     <div id="wd-account-navigation" className="rounded-0 wd list-group fs-5 rounded-0">
@@ -22,6 +23,11 @@ export default function AccountNavigation() {
           {link.name}
         </Link>
       ))}
+      {currentUser && currentUser.role === "ADMIN" && (
+        <Link to={`/Kanbas/Account/Users`} className={`list-group-item ${active("Users")}`}> Users </Link>)}
+
     </div>
   );
 }
+
+
