@@ -57,15 +57,15 @@ export default function Modules() {
                   <BsGripVertical className="me-2 fs-3" />
                   {!module.editing && module.name}
                   {module.editing && (
-                    <input className="form-control w-50 d-inline-block"
+                    <input className="form-control w-50 d-inline-block" value={module.name}
                       onChange={(e) => dispatch(updateModule({ ...module, name: e.target.value }))}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           saveModule({ ...module, editing: false });
 
                         }
-                      }}
-                      defaultValue={module.name} />
+                      }} />
+
                   )}
                   <ModulesControlButtons
                     moduleId={module._id}

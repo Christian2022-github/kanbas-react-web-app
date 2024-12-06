@@ -4,6 +4,10 @@ const COURSES_API = `${REMOTE_SERVER}/api/courses`;
 const ASSIGNMENTS_API = `${REMOTE_SERVER}/api/assignments`;
 
 
+export const updateAssignment = async (assignment: any) => {
+    const { data } = await axios.put(`${ASSIGNMENTS_API}/${assignment._id}`, assignment);
+    return data;
+};
 
 export const findAssignmentsForCourse = async (courseId: string) => {
     const response = await axios
@@ -24,11 +28,6 @@ export const createAssignmentForCourse = async (courseId: string, assignment: an
     return response.data;
 };
 
-
-export const updateAssignment = async (assignment: any) => {
-    const { data } = await axios.put(`${COURSES_API}/${assignment._id}`, assignment);
-    return data;
-};
 
 
 

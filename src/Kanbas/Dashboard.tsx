@@ -6,6 +6,7 @@ import * as enrollmentsClient from "./Courses/Enrollments/client"
 import * as coursesClient from "./Courses/client";
 
 import { setEnrollments, enroll, unenroll } from "./Courses/Enrollments/reducer";
+import JsonStringify from "../Labs/Lab3/JsonStringify";
 
 export default function Dashboard(
   { courses,
@@ -169,9 +170,37 @@ export default function Dashboard(
     }
   }, [showAllCourses]);
 
+  useEffect(() => {
+    if (currentUser) {
+      if (isStudent) {
+        // Fetching enrolled courses
+        const enrolledCourses = courses.filter(course =>
+          enrollments.some((enrollment: { user: string; course: string }) => enrollment.course === course._id)
+        );
+        setTheCourses(enrolledCourses);
+      } else {
+        //How to fetch faculty
+        const facultyCourses = courses.filter(course =>
+          enrollments.some((enrollment: { user: string; course: string }) => enrollment.course === course._id)
+        );
+        setTheCourses(facultyCourses);
+      }
+    }
+  }, [currentUser, courses]);
+
+
+  const c = allClasses.map((theCourse: any) => {
+    const enrolled = enrolledCourses.some((e: any) => e._id === theCourse._id)
+    return { ...theCourse, enrolled }
+  })
+
+  // const hii = enrolledCourses.some((e: any) => e._id === theCourse._id)
+
   return (
+
     <div className="p-4" id="wd-dashboard">
       <h1 id="wd-dashboard-title">Dashboard</h1>
+      <pre>{JSON.stringify(c, null, 2)}</pre>
       <hr />
 
 

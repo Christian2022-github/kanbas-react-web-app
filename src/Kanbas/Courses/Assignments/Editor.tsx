@@ -16,7 +16,7 @@ export default function AssignmentEditor(
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const assignments = useSelector((state: any) => state.assignmentReducer);
+    const assignments = useSelector((state: any) => state.assignmentReducer.assignments);
 
 
     const [assignment2, setAssignment2] = useState<any>({});
@@ -153,7 +153,7 @@ export default function AssignmentEditor(
                 dueDateTime: "12:00am",
             });
         } else {
-            const a = db.assignments.find((assignment) => assignment._id === aid);
+            const a = assignments.find((assignment: any) => assignment._id === aid);
             setAssignment2(a);
         }
     }, [aid]);
@@ -163,10 +163,12 @@ export default function AssignmentEditor(
 
         if (!isNewAssignment) {
             console.log("updated!");
-            dispatch(updateAssignment(assignment2));
+            // dispatch(updateAssignment(assignment2));
+            updateAssignmentForCourse();
         } else {
             console.log("added!");
-            dispatch(addAssignment(assignment2));
+            // dispatch(addAssignment(assignment2));
+            createAssignmentForCourse();
         }
 
         navigate(`/Kanbas/Courses/${cid}/Assignments`);
