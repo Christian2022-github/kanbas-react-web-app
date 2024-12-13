@@ -4,7 +4,7 @@ import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { updateAssignment } from "./reducer";
 import { addAssignment } from "./reducer";
 import * as db from "../../Databases";
-import * as assingmentsClient from "../Assignments/client";
+import * as assignmentsClient from "../Assignments/client";
 
 
 export default function AssignmentEditor(
@@ -19,54 +19,64 @@ export default function AssignmentEditor(
     const assignments = useSelector((state: any) => state.assignmentReducer);
 
 
+
+
+
     const [assignment2, setAssignment2] = useState<any>({});
 
-    const [availableDateMonth, setAvailableDateMonth] = useState(assignment2.availableDateMonth || "");
-    const [availableDateDay, setAvailableDateDay] = useState(assignment2.availableDateMonth || "");
-    const [availableDateYear, setAvailableDateYear] = useState(assignment2.availableDateMonth || "");
-    const [untilDateMonth, setUntilDateMonth] = useState(assignment2.availableDateMonth || "");
-    const [untilDateDay, setUntilDateDay] = useState(assignment2.availableDateMonth || "");
-    const [untilDateYear, setUntilDateYear] = useState(assignment2.availableDateMonth || "");
-    const [dueDateMonth, setDueDateMonth] = useState(assignment2.availableDateMonth || "");
-    const [dueDateDay, setDueDateDay] = useState(assignment2.availableDateMonth || "");
-    const [dueDateYear, setDueDateYear] = useState(assignment2.availableDateMonth || "");
+    const fetchAssignment = async () => {
+        const a = await assignmentsClient.fetchAssignment(aid || "");
+        setAssignment2(a);
+    }
+
+    const [availableDateMonth, setAvailableDateMonth] = useState(assignment2?.availableDateMonth || "");
+    const [availableDateDay, setAvailableDateDay] = useState(assignment2?.availableDateMonth || "");
+    const [availableDateYear, setAvailableDateYear] = useState(assignment2?.availableDateMonth || "");
+    const [untilDateMonth, setUntilDateMonth] = useState(assignment2?.availableDateMonth || "");
+    const [untilDateDay, setUntilDateDay] = useState(assignment2?.availableDateMonth || "");
+    const [untilDateYear, setUntilDateYear] = useState(assignment2?.availableDateMonth || "");
+    const [dueDateMonth, setDueDateMonth] = useState(assignment2?.availableDateMonth || "");
+    const [dueDateDay, setDueDateDay] = useState(assignment2?.availableDateMonth || "");
+    const [dueDateYear, setDueDateYear] = useState(assignment2?.availableDateMonth || "");
 
 
     const createAssignmentForCourse = async () => {
-        if (!cid) return; // Ensure course ID is available
+        if (!cid) return;
         const newAssignment = {
-            title: assignment2.title,
-            description: assignment2.description,
-            points: assignment2.points,
+            title: assignment2?.title,
+            description: assignment2?.description,
+            points: assignment2?.points,
             course: cid,
-            availableDateMonth: "August",
-            availableDateDay: 12,
-            availableDateYear: 2000,
-            untilDateMonth: "August",
-            untilDateDay: 14,
-            untilDateYear: 2000,
-            dueDateMonth: "August",
-            dueDateDay: 13,
-            DueDateYear: 2000,
+            availableDateMonth: availableDateMonth,
+            availableDateDay: availableDateDay,
+            availableDateYear: availableDateYear,
+            untilDateMonth: untilDateMonth,
+            untilDateDay: untilDateDay,
+            untilDateYear: untilDateYear,
+            dueDateMonth: dueDateMonth,
+            dueDateDay: dueDateDay,
+            dueDateYear: dueDateYear,
             availableDateTime: "12:00am",
             untilDateTime: "12:00am",
             dueDateTime: "12:00am",
         };
 
         try {
-            const assignment = await assingmentsClient.createAssignmentForCourse(cid, newAssignment);
+            const assignment = await assignmentsClient.createAssignmentForCourse(cid, newAssignment);
             dispatch(addAssignment(assignment));
         } catch (error) {
             console.error("Failed to create assignment:", error);
+            throw error;
         }
     };
 
 
 
     const updateAssignmentForCourse = async () => {
-        if (!aid) return; // Ensure assignment ID is available
+        if (!aid) return;
         const updatedAssignment = {
             ...assignment2,
+            _id: aid,
             availableDateMonth: "August",
             availableDateDay: 12,
             availableDateYear: 2000,
@@ -75,15 +85,15 @@ export default function AssignmentEditor(
             untilDateYear: 2000,
             dueDateMonth: "August",
             dueDateDay: 13,
-            DueDateYear: 2000,
+            dueDateYear: 2000,
             availableDateTime: "12:00am",
             untilDateTime: "12:00am",
             dueDateTime: "12:00am",
         };
 
         try {
-            const assignment = await assingmentsClient.updateAssignment(updatedAssignment);
-            dispatch(updateAssignment(assignment)); // Dispatch action to update Redux state
+            const assignment = await assignmentsClient.updateAssignment(updatedAssignment);
+            dispatch(updateAssignment(assignment));
         } catch (error) {
             console.error("Failed to update assignment:", error);
         }
@@ -153,23 +163,23 @@ export default function AssignmentEditor(
                 dueDateTime: "12:00am",
             });
         } else {
-            const a = db.assignments.find((assignment) => assignment._id === aid);
-            setAssignment2(a);
+            // const a = db.assignments.find((assignment) => assignment._id === aid);
+            // setAssignment2(a);
+            fetchAssignment();
         }
     }, [aid]);
 
-    const handleSave = () => {
-
-
-        if (!isNewAssignment) {
-            console.log("updated!");
-            dispatch(updateAssignment(assignment2));
-        } else {
-            console.log("added!");
-            dispatch(addAssignment(assignment2));
+    const handleSave = async () => {
+        try {
+            if (isNewAssignment) {
+                await createAssignmentForCourse();
+            } else {
+                await updateAssignmentForCourse();
+            }
+            navigate(`/Kanbas/Courses/${cid}/Assignments`);
+        } catch (error) {
+            console.error("Failed to save assignment:", error);
         }
-
-        navigate(`/Kanbas/Courses/${cid}/Assignments`);
     };
 
     return (
@@ -182,7 +192,7 @@ export default function AssignmentEditor(
                     type="text"
                     className="form-control"
                     id="wd-name"
-                    value={assignment2.title}
+                    value={assignment2?.title}
                     onChange={(e) => setAssignment2({ ...assignment2, title: e.target.value })} />
             </div>
             <div className="mb-3 ">
@@ -190,7 +200,7 @@ export default function AssignmentEditor(
                     className="form-control"
                     id="wd-description"
                     rows={3}
-                    value={assignment2.description}
+                    value={assignment2?.description}
                     onChange={(e) => setAssignment2({ ...assignment2, description: e.target.value })} />
             </div>
             <table align="center">
@@ -200,7 +210,7 @@ export default function AssignmentEditor(
                     </td>
                     <td >
                         <input type="text" className="form-control"
-                            id="wd-points" value={assignment2.points}
+                            id="wd-points" value={assignment2?.points}
                             onChange={(e) => setAssignment2({ ...assignment2, points: e.target.value })} />
                     </td>
                 </tr>

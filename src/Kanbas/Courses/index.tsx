@@ -8,13 +8,11 @@ import { FaAlignJustify } from "react-icons/fa";
 import PeopleTable from "./People/Table";
 import { Link, useLocation } from "react-router-dom";
 
-
-
-
 export default function Courses({ courses }: { courses: any[]; }) {
   const { pathname } = useLocation();
   const { cid } = useParams();
   const course = courses.find((course) => course._id === cid);
+
   return (
     <div id="wd-courses">
       <h2 className="text-danger">
@@ -32,10 +30,9 @@ export default function Courses({ courses }: { courses: any[]; }) {
             <Route path="Assignments" element={<Assignments />} />
             <Route path="Assignments/:aid" element={<AssignmentEditor />} />
             <Route path="People" element={<PeopleTable />} />
-
           </Routes>
-        </div></div>
+        </div>
+      </div>
     </div>
-
   );
 }
