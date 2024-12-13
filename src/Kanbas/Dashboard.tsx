@@ -231,9 +231,7 @@ export default function Dashboard(
         <div className="row row-cols-1 row-cols-md-5 g-4">
 
           {theCourses.map((course: any) => {
-
-
-
+            if (!course) return null;
             return (
               <div className="wd-dashboard-course col" style={{ width: "260px" }} key={course._id}>
                 <div className="card rounded-3 overflow-hidden">
@@ -249,7 +247,8 @@ export default function Dashboard(
                           {course.enrolled ? "Unenroll" : "Enroll"}
                         </button>
                       )}
-                      {course.name}</h5>
+                      {course.name}
+                    </h5>
                     <p className="wd-dashboard-course-title card-text overflow-y-hidden" style={{ maxHeight: 100 }}>
                       {course.description}
                     </p>
